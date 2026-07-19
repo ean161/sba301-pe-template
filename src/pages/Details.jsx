@@ -24,7 +24,7 @@ export default function Details() {
 
     return (
         <>
-            <h1>Details</h1>
+            <h1>{config.DETAILS.title}</h1>
 			<Container>
 				{Object.entries(config.DETAILS.list).map(([key, func]) => (
 					<p key={key}>{key}: {func(details)}</p>
