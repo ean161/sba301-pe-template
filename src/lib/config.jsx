@@ -7,6 +7,7 @@ export const config = {
 		page: "/",
         rest: "/v1/recipes",
         param: "content",
+		nullTableText: "No records found",
         table: {
 			"ID": (row) => row.id,
 			"RECEIPE NAME": (row) => <Link to={`/recipes/${row.id}`}>{row.name}</Link> ,

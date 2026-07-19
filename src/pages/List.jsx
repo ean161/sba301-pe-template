@@ -18,24 +18,27 @@ export default function List() {
     return (
         <>
             <h1>LIST PAGE</h1>
-            <Table>
-                <thead>
-                    {Object.keys(config.LIST.table).map((col, idx) => (
-                        <th>{col}</th>
-                    ))}
-                </thead>
-                <tbody>
-                    {list.map((row, idx) => (
-                        <tr key={idx}>
-                            {Object.values(config.LIST.table).map(
-                                (col, idx) => (
-                                    <td>{col(row)}</td>
-                                ),
-                            )}
-                        </tr>
-                    ))}
-                </tbody>
-            </Table>
+            {(!list || list.length === 0) && <p>{config.LIST.nullTableText}</p>}
+            {list && (
+                <Table>
+                    <thead>
+                        {Object.keys(config.LIST.table).map((col, idx) => (
+                            <th>{col}</th>
+                        ))}
+                    </thead>
+                    <tbody>
+                        {list.map((row, idx) => (
+                            <tr key={idx}>
+                                {Object.values(config.LIST.table).map(
+                                    (col, idx) => (
+                                        <td>{col(row)}</td>
+                                    ),
+                                )}
+                            </tr>
+                        ))}
+                    </tbody>
+                </Table>
+            )}
         </>
     );
 }
