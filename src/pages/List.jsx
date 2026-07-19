@@ -1,7 +1,7 @@
 import { api } from "../lib/api.js";
 import { config } from "../lib/config.jsx";
 import { useEffect, useState } from "react";
-import { Pagination, Table } from "react-bootstrap";
+import {Button, Pagination, Table} from "react-bootstrap";
 
 export default function List() {
     const [list, setList] = useState([]);
@@ -35,6 +35,7 @@ export default function List() {
     return (
         <>
             <h1>{config.LIST.title}</h1>
+			<Button href={config.ADD.page}>{config.ADD.btnTitle}</Button>
             {(!list || list.length === 0) && <p>{config.LIST.nullTableText}</p>}
             {list.length > 0 && (
                 <Table>

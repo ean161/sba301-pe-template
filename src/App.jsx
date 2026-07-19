@@ -1,21 +1,22 @@
 import "bootstrap/dist/css/bootstrap.css";
-import {HashRouter, Route, Routes} from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { config } from "./lib/config.jsx";
 import List from "./pages/List.jsx";
-import {config} from "./lib/config.jsx";
 import Details from "./pages/Details.jsx";
+import Add from "./pages/Add.jsx";
 
 function App() {
     return (
-		<HashRouter>
-			{/*<AppNavbar />*/}
-			<main>
-				<Routes>
-					<Route path={config.LIST.page} element={<List />} />
-					<Route path={config.DETAILS.page} element={<Details />} />
-					{/*<Route path="/recipes/add" element={<AddRecipe />} />*/}
-				</Routes>
-			</main>
-		</HashRouter>
+        <BrowserRouter>
+            {/*<AppNavbar />*/}
+            <main>
+                <Routes>
+                    <Route path={config.LIST.page} element={<List />} />
+                    <Route path={config.DETAILS.page} element={<Details />} />
+                    <Route path={config.ADD.page} element={<Add />} />
+                </Routes>
+            </main>
+        </BrowserRouter>
     );
 }
 

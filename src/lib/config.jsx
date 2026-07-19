@@ -22,7 +22,47 @@ export const config = {
 		rest: "/v1/recipes/:id",
 		list: {
 			"ID": (row) => row.id,
-			"RECEIPE NAME": (row) => row.name,
+			"RECIPE NAME": (row) => row.name,
 		}
+	},
+	ADD: {
+		btnTitle: "Add",
+		title: "ADD RECIPE",
+		page: "/recipes/add",
+		rest: "/v1/recipes",
+		form: [
+			{
+				label: "Name",
+				key: "name",
+				placeHolder: "Enter a name",
+				type: "input",
+				validate: {
+					type: "text",
+					min: 3,
+					max: 5
+				}
+			},
+			{
+				label: "Age",
+				key: "age",
+				placeHolder: "Enter a age",
+				type: "input",
+				validate: {
+					type: "number",
+					min: 3,
+					max: 5
+				}
+			},
+			{
+				label: "Role",
+				key: "role",
+				placeHolder: "Select a role",
+				type: "select",
+				options: {
+					"AID": "ADMIN",
+					"SID": "STAFF",
+				}
+			}
+		]
 	}
 };
