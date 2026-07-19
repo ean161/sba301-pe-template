@@ -7,7 +7,7 @@ export default function List() {
     const [list, setList] = useState([]);
 
     const fetchList = async () => {
-        const req = await api.get(config.LIST.url);
+        const req = await api.get(config.LIST.rest);
         setList(req.data[config.LIST.param]);
     };
 

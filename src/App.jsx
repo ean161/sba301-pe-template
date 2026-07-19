@@ -1,6 +1,8 @@
 import "bootstrap/dist/css/bootstrap.css";
 import {HashRouter, Route, Routes} from "react-router-dom";
 import List from "./pages/List.jsx";
+import {config} from "./lib/config.jsx";
+import Details from "./pages/Details.jsx";
 
 function App() {
     return (
@@ -8,9 +10,9 @@ function App() {
 			{/*<AppNavbar />*/}
 			<main>
 				<Routes>
-					<Route path="/" element={<List />} />
+					<Route path={config.LIST.page} element={<List />} />
+					<Route path={config.DETAILS.page} element={<Details />} />
 					{/*<Route path="/recipes/add" element={<AddRecipe />} />*/}
-					{/*<Route path="/recipes/:id" element={<RecipeDetails />} />*/}
 				</Routes>
 			</main>
 		</HashRouter>
