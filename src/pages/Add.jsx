@@ -1,10 +1,25 @@
 import { config } from "../lib/config.jsx";
 import { Button, Form, InputGroup } from "react-bootstrap";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { api } from "../lib/api.js";
 
 export default function Add() {
     const [form, setForm] = useState({});
     const [errors, setErrors] = useState({});
+
+    const [fetchField, setFetchField] = useState({});
+    const fetchSelectField = async () => {
+        const fetchFieldList = config.ADD.form.filter(
+            (item) => item.type === "fetch-select",
+        );
+
+        if (!fetchFieldList || fetchFieldList.length === 0) {
+            return;
+        }
+
+        const req = await api.get(`${fetchFieldList[0].options.url}`);
+        setFetchField(req.data);
+    };
 
     const validate = () => {
         const err = {};
@@ -61,6 +76,10 @@ export default function Add() {
         setErrors((current) => ({ ...current, [name]: undefined }));
     };
 
+    useEffect(() => {
+        fetchSelectField();
+    }, []);
+
     console.log(form, errors);
 
     return (
@@ -72,7 +91,9 @@ export default function Add() {
                         key={item.key}
                         className={"d-flex align-items-center gap-3 mb-3"}
                     >
-                        <Form.Label className={"w-25 text-end"}>{item.label}</Form.Label>
+                        <Form.Label className={"w-25 text-end"}>
+                            {item.label}
+                        </Form.Label>
                         <div className={"w-50"}>
                             {item.type === "input" && (
                                 <Form.Control
@@ -100,13 +121,34 @@ export default function Add() {
                                     )}
                                 </Form.Select>
                             )}
-                            <Form.Control.Feedback className={"text-end"} type="invalid">
+                            {item.type === "fetch-select" && (
+                                <Form.Select
+                                    name={item.key}
+                                    value={form[item.key]}
+                                    onChange={updateField}
+                                    isInvalid={Boolean(errors[item.key])}
+                                >
+                                    <option value="">{item.placeHolder}</option>
+                                    {fetchField &&
+                                        "map" in fetchField &&
+                                        fetchField.map((row) => (
+                                            <option key={row.id} value={row.id}>
+                                                {row[item.options.param]}
+                                            </option>
+                                        ))}
+                                </Form.Select>
+                            )}
+                            <Form.Control.Feedback
+                                className={"text-end"}
+                                type="invalid"
+                            >
                                 {errors[item.key]}
                             </Form.Control.Feedback>
                         </div>
                     </Form.Group>
                 ))}
                 <Form.Group>
+					<Button className={"me-2"} variant={"secondary"} href={"/"}>Back</Button>
                     <Button onClick={validate}>Submit</Button>
                 </Form.Group>
             </Form>
