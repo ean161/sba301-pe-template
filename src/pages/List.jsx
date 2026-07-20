@@ -103,8 +103,11 @@ export default function List() {
                     <Modal.Title>{config.DELETE.title}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-					<DeleteContainer id={deleteSelected}/>
-				</Modal.Body>
+                    <DeleteContainer
+                        id={deleteSelected}
+                        toggleModal={setDeleteModalOpen}
+                    />
+                </Modal.Body>
             </Modal>
         </>
     );
