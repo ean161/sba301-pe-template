@@ -10,6 +10,10 @@ export const config = {
         param: "content",
         nullTableText: "No records found",
         pageSize: 5,
+        search: {
+            isEnabled: false,
+            label: "Search by name",
+        },
         table: {
             ID: (row) => row.id,
             "RECIPE NAME": (row) => (

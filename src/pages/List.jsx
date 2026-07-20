@@ -1,7 +1,14 @@
 import { api } from "../lib/api.js";
 import { config } from "../lib/config.jsx";
 import { useEffect, useState } from "react";
-import { Button, Modal, Pagination, Table } from "react-bootstrap";
+import {
+    Button,
+    Container,
+    Form,
+    Modal,
+    Pagination,
+    Table,
+} from "react-bootstrap";
 import DeleteContainer from "../components/DeleteContainer.jsx";
 
 export default function List() {
@@ -10,6 +17,8 @@ export default function List() {
 
     const [list, setList] = useState([]);
     const [page, setPage] = useState(0);
+    const [search, setSearch] = useState("");
+
     const [pagination, setPagination] = useState({
         totalElements: 0,
         totalPages: 0,
@@ -19,7 +28,7 @@ export default function List() {
 
     const fetchList = async () => {
         const req = await api.get(config.LIST.rest, {
-            params: { page, size: config.LIST.pageSize },
+            params: { page, size: config.LIST.pageSize, search },
         });
         const data = req.data;
 
@@ -32,6 +41,10 @@ export default function List() {
         });
     };
 
+    const handleSearch = () => {
+        fetchList();
+    };
+
     useEffect(() => {
         fetchList();
     }, [page]);
@@ -41,10 +54,33 @@ export default function List() {
         setDeleteModalOpen(true);
     };
 
+    useEffect(() => {
+        if (search === "") {
+            fetchList();
+        }
+    }, [search]);
+
     return (
         <>
             <h1>{config.LIST.title}</h1>
             <Button href={config.ADD.page}>{config.ADD.btnTitle}</Button>
+            {config.LIST.search.isEnabled && (
+                <Container>
+                    <Form>
+                        <Form.Group>
+                            <Form.Label>{config.LIST.search.label}</Form.Label>
+                            <Form.Control
+                                name={config.LIST.search.key}
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                            />
+                        </Form.Group>
+                        <Form.Group>
+                            <Button onClick={handleSearch}>Search</Button>
+                        </Form.Group>
+                    </Form>
+                </Container>
+            )}
             {(!list || list.length === 0) && <p>{config.LIST.nullTableText}</p>}
             {list.length > 0 && (
                 <Table>
