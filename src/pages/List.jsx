@@ -1,9 +1,13 @@
 import { api } from "../lib/api.js";
 import { config } from "../lib/config.jsx";
 import { useEffect, useState } from "react";
-import {Button, Pagination, Table} from "react-bootstrap";
+import { Button, Modal, Pagination, Table } from "react-bootstrap";
+import DeleteContainer from "../components/DeleteContainer.jsx";
 
 export default function List() {
+    const [deleteSelected, setDeleteSelected] = useState(0);
+    const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+
     const [list, setList] = useState([]);
     const [page, setPage] = useState(0);
     const [pagination, setPagination] = useState({
@@ -32,10 +36,15 @@ export default function List() {
         fetchList();
     }, [page]);
 
+    const handleDeleteBtn = (id) => {
+        setDeleteSelected(id);
+        setDeleteModalOpen(true);
+    };
+
     return (
         <>
             <h1>{config.LIST.title}</h1>
-			<Button href={config.ADD.page}>{config.ADD.btnTitle}</Button>
+            <Button href={config.ADD.page}>{config.ADD.btnTitle}</Button>
             {(!list || list.length === 0) && <p>{config.LIST.nullTableText}</p>}
             {list.length > 0 && (
                 <Table>
@@ -51,7 +60,9 @@ export default function List() {
                             <tr key={row.id ?? idx}>
                                 {Object.values(config.LIST.table).map(
                                     (col, idx) => (
-                                        <td key={idx}>{col(row)}</td>
+                                        <td key={idx}>
+                                            {col(row, handleDeleteBtn)}
+                                        </td>
                                     ),
                                 )}
                             </tr>
@@ -86,6 +97,15 @@ export default function List() {
                     </Pagination>
                 </>
             )}
+
+            <Modal show={isDeleteModalOpen} onHide={setDeleteModalOpen}>
+                <Modal.Header closeButton>
+                    <Modal.Title>{config.DELETE.title}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+					<DeleteContainer id={deleteSelected}/>
+				</Modal.Body>
+            </Modal>
         </>
     );
 }

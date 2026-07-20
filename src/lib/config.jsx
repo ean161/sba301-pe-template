@@ -15,8 +15,13 @@ export const config = {
             "RECIPE NAME": (row) => (
                 <Link to={`/recipes/${row.id}`}>{row.name}</Link>
             ),
-            ACTIONS: (row) => (
-                <Button variant={"outline-danger"}>Delete {row.id}</Button>
+            ACTIONS: (row, handleDeleteBtn) => (
+                <Button
+                    variant={"outline-danger"}
+                    onClick={() => handleDeleteBtn(row.id)}
+                >
+                    Delete {row.id}
+                </Button>
             ),
         },
     },
@@ -79,5 +84,16 @@ export const config = {
                 },
             },
         ],
+    },
+    DELETE: {
+        isModal: true,
+        title: "DELETE RECIPE",
+        page: "/recipes/delete/:id",
+        rest: "/v1/recipes/:id",
+        text: "Do u wanna delete this?",
+        list: {
+            ID: (row) => row.id,
+            "RECIPE NAME": (row) => row.name,
+        },
     },
 };
