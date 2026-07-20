@@ -2,8 +2,10 @@ import { config } from "../lib/config.jsx";
 import { Button, Form, InputGroup } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { api } from "../lib/api.js";
+import { useNavigate } from "react-router-dom";
 
 export default function Add() {
+    const navigator = useNavigate();
     const [form, setForm] = useState({});
     const [errors, setErrors] = useState({});
 
@@ -24,7 +26,7 @@ export default function Add() {
     const validate = () => {
         const err = {};
 
-        config.ADD.form.map((item) => {
+        config.ADD.form.forEach((item) => {
             const val = form[item.key];
 
             if (!val) {
@@ -80,12 +82,29 @@ export default function Add() {
         fetchSelectField();
     }, []);
 
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        const isValid = validate();
+        if (!isValid) {
+            return;
+        }
+
+        try {
+            const req = await api.post(config.ADD.rest, JSON.stringify(form));
+            alert(config.ADD.successAlert);
+            navigator("/");
+        } catch (e) {
+            alert(config.ADD.errorAlert);
+        }
+    };
+
     console.log(form, errors);
 
     return (
         <>
             <h1>{config.ADD.title}</h1>
-            <Form noValidate>
+            <Form noValidate onSubmit={handleSubmit}>
                 {config.ADD.form.map((item) => (
                     <Form.Group
                         key={item.key}
@@ -148,8 +167,10 @@ export default function Add() {
                     </Form.Group>
                 ))}
                 <Form.Group>
-					<Button className={"me-2"} variant={"secondary"} href={"/"}>Back</Button>
-                    <Button onClick={validate}>Submit</Button>
+                    <Button className={"me-2"} variant={"secondary"} href={"/"}>
+                        Back
+                    </Button>
+                    <Button type={"submit"}>Submit</Button>
                 </Form.Group>
             </Form>
         </>

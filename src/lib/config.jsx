@@ -11,7 +11,7 @@ export const config = {
         nullTableText: "No records found",
         pageSize: 5,
         search: {
-            isEnabled: false,
+            isEnabled: true,
             label: "Search by name",
         },
         table: {
@@ -57,6 +57,8 @@ export const config = {
         title: "ADD RECIPE",
         page: "/recipes/add",
         rest: "/v1/recipes",
+		successAlert: "Recipe created successfully",
+		errorAlert: "Failed on create",
         form: [
             {
                 label: "Name",
@@ -70,9 +72,9 @@ export const config = {
                 },
             },
             {
-                label: "Age",
-                key: "age",
-                placeHolder: "Enter a age",
+                label: "Prep time",
+                key: "prepTime",
+                placeHolder: "Enter a prep time",
                 type: "input",
                 validate: {
                     type: "number",
@@ -81,13 +83,36 @@ export const config = {
                 },
             },
             {
-                label: "Role",
-                key: "role",
-                placeHolder: "Select a role",
+                label: "Cook time",
+                key: "cookTime",
+                placeHolder: "Enter a cook time",
+                type: "input",
+                validate: {
+                    type: "number",
+                    min: 3,
+                    max: 5,
+                },
+            },
+            {
+                label: "Difficulty",
+                key: "difficulty",
+                placeHolder: "Select a difficulty",
                 type: "select",
                 options: {
-                    AID: "ADMIN",
-                    SID: "STAFF",
+                    easy: "Easy",
+                    medium: "Medium",
+                    hard: "Hard",
+                },
+            },
+            {
+                label: "Servings",
+                key: "servings",
+                placeHolder: "Enter servings",
+                type: "input",
+                validate: {
+                    type: "number",
+                    min: 3,
+                    max: 5,
                 },
             },
             {

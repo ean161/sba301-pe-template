@@ -63,20 +63,36 @@ export default function List() {
     return (
         <>
             <h1>{config.LIST.title}</h1>
-            <Button href={config.ADD.page}>{config.ADD.btnTitle}</Button>
+            <Button
+                href={config.ADD.page}
+                variant={"success"}
+                className={"mb-4"}
+            >
+                {config.ADD.btnTitle}
+            </Button>
             {config.LIST.search.isEnabled && (
-                <Container>
+                <Container className={"mb-4"}>
                     <Form>
-                        <Form.Group>
-                            <Form.Label>{config.LIST.search.label}</Form.Label>
+                        <Form.Group
+                            className={
+                                "d-flex align-items-center items-center justify-content-center gap-3 mb-3"
+                            }
+                        >
+                            <Form.Label className={"w-fit"}>
+                                {config.LIST.search.label}
+                            </Form.Label>
                             <Form.Control
                                 name={config.LIST.search.key}
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
+                                className={"w-25"}
                             />
-                        </Form.Group>
-                        <Form.Group>
-                            <Button onClick={handleSearch}>Search</Button>
+                            <Button
+                                onClick={handleSearch}
+                                variant={"outline-secondary"}
+                            >
+                                Search
+                            </Button>
                         </Form.Group>
                     </Form>
                 </Container>
