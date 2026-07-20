@@ -103,7 +103,9 @@ export const config = {
         title: "DELETE RECIPE",
         page: "/recipes/delete/:id",
         rest: "/v1/recipes/:id",
-        text: "Do u wanna delete this?",
+        param: "name",
+        text: "Do u wanna delete :param?",
+        successAlert: "Deleted :param successfully",
         list: {
             ID: (row) => row.id,
             "RECIPE NAME": (row) => row.name,

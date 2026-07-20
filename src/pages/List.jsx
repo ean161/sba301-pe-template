@@ -17,22 +17,22 @@ export default function List() {
         last: true,
     });
 
+    const fetchList = async () => {
+        const req = await api.get(config.LIST.rest, {
+            params: { page, size: config.LIST.pageSize },
+        });
+        const data = req.data;
+
+        setList(data[config.LIST.param] ?? []);
+        setPagination({
+            totalElements: data.totalElements ?? 0,
+            totalPages: data.totalPages ?? 0,
+            first: data.first ?? data.page === 0,
+            last: data.last ?? data.page >= data.totalPages - 1,
+        });
+    };
+
     useEffect(() => {
-        const fetchList = async () => {
-            const req = await api.get(config.LIST.rest, {
-                params: { page, size: config.LIST.pageSize },
-            });
-            const data = req.data;
-
-            setList(data[config.LIST.param] ?? []);
-            setPagination({
-                totalElements: data.totalElements ?? 0,
-                totalPages: data.totalPages ?? 0,
-                first: data.first ?? data.page === 0,
-                last: data.last ?? data.page >= data.totalPages - 1,
-            });
-        };
-
         fetchList();
     }, [page]);
 
@@ -106,6 +106,7 @@ export default function List() {
                     <DeleteContainer
                         id={deleteSelected}
                         toggleModal={setDeleteModalOpen}
+                        fetchList={fetchList}
                     />
                 </Modal.Body>
             </Modal>
