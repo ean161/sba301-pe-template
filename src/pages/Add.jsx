@@ -1,5 +1,5 @@
 import { config } from "../lib/config.jsx";
-import { Button, Form, InputGroup } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { api } from "../lib/api.js";
 import { useNavigate } from "react-router-dom";
@@ -65,6 +65,17 @@ export default function Add() {
                         return;
                     }
                 }
+
+                if (
+                    item.validate.type === "date" ||
+                    item.validate.type === "datetime"
+                ) {
+                    const date = new Date(val);
+                    if (Number.isNaN(date.getTime())) {
+                        err[item.key] = `${item.label} must be a valid date`;
+                        return;
+                    }
+                }
             }
         });
 
@@ -116,6 +127,21 @@ export default function Add() {
                         <div className={"w-50"}>
                             {item.type === "input" && (
                                 <Form.Control
+                                    name={item.key}
+                                    value={form[item.key]}
+                                    onChange={updateField}
+                                    placeholder={item.placeHolder}
+                                    isInvalid={Boolean(errors[item.key])}
+                                />
+                            )}
+                            {(item.type === "date" ||
+                                item.type === "datetime") && (
+                                <Form.Control
+                                    type={
+                                        item.type === "date"
+                                            ? "date"
+                                            : "datetime-local"
+                                    }
                                     name={item.key}
                                     value={form[item.key]}
                                     onChange={updateField}

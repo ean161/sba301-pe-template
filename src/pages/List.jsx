@@ -18,6 +18,11 @@ export default function List() {
     const [list, setList] = useState([]);
     const [page, setPage] = useState(0);
     const [search, setSearch] = useState("");
+    const [submittedSearch, setSubmittedSearch] = useState("");
+    const [filterSelection, setFilterSelection] = useState("");
+    const [submittedFilterSelection, setSubmittedFilterSelection] =
+        useState("");
+    const [fetchFilterSelection, setFetchFilterSelection] = useState([]);
 
     const [pagination, setPagination] = useState({
         totalElements: 0,
@@ -26,9 +31,25 @@ export default function List() {
         last: true,
     });
 
-    const fetchList = async () => {
+    const fetchList = async (
+        searchValue = submittedSearch,
+        filterSelectionValue = submittedFilterSelection,
+    ) => {
+        const params = {
+            page,
+            size: config.LIST.pageSize,
+        };
+
+        if (config.LIST.search.isEnabled) {
+            params[config.LIST.search.key] = searchValue;
+        }
+
+        if (config.LIST.filterSelection.isEnabled && filterSelectionValue) {
+            params[config.LIST.filterSelection.key] = filterSelectionValue;
+        }
+
         const req = await api.get(config.LIST.rest, {
-            params: { page, size: config.LIST.pageSize, search },
+            params,
         });
         const data = req.data;
 
@@ -41,24 +62,82 @@ export default function List() {
         });
     };
 
-    const handleSearch = () => {
-        fetchList();
+    const handleSearch = (event) => {
+        event.preventDefault();
+        setSubmittedSearch(search);
+        setSubmittedFilterSelection(filterSelection);
+
+        if (page === 0) {
+            fetchList(search, filterSelection);
+        } else {
+            setPage(0);
+        }
+    };
+
+    const handleFilterSelectionChange = (event) => {
+        setFilterSelection(event.target.value);
     };
 
     useEffect(() => {
-        fetchList();
+        const loadList = async () => {
+            const params = {
+                page,
+                size: config.LIST.pageSize,
+            };
+
+            if (config.LIST.search.isEnabled) {
+                params[config.LIST.search.key] = submittedSearch;
+            }
+
+            if (
+                config.LIST.filterSelection.isEnabled &&
+                submittedFilterSelection
+            ) {
+                params[config.LIST.filterSelection.key] =
+                    submittedFilterSelection;
+            }
+
+            const req = await api.get(config.LIST.rest, {
+                params,
+            });
+            const data = req.data;
+
+            setList(data[config.LIST.param] ?? []);
+            setPagination({
+                totalElements: data.totalElements ?? 0,
+                totalPages: data.totalPages ?? 0,
+                first: data.first ?? data.page === 0,
+                last: data.last ?? data.page >= data.totalPages - 1,
+            });
+        };
+
+        loadList();
+        // Search and filter are intentionally submitted by the Search button.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page]);
+
+    useEffect(() => {
+        const loadFilterSelectionField = async () => {
+            const filterConfig = config.LIST.filterSelection;
+
+            if (
+                !filterConfig.isEnabled ||
+                filterConfig.type !== "fetch-select"
+            ) {
+                return;
+            }
+
+            const req = await api.get(`${filterConfig.options.url}`);
+            setFetchFilterSelection(req.data);
+        };
+
+        loadFilterSelectionField();
+    }, []);
 
     const handleDeleteBtn = (id) => {
         setDeleteSelected(id);
         setDeleteModalOpen(true);
     };
-
-    useEffect(() => {
-        if (search === "") {
-            fetchList();
-        }
-    }, [search]);
 
     return (
         <>
@@ -70,25 +149,90 @@ export default function List() {
             >
                 {config.ADD.btnTitle}
             </Button>
-            {config.LIST.search.isEnabled && (
+            {(config.LIST.search.isEnabled ||
+                config.LIST.filterSelection.isEnabled) && (
                 <Container className={"mb-4"}>
-                    <Form>
+                    <Form onSubmit={handleSearch}>
                         <Form.Group
                             className={
                                 "d-flex align-items-center items-center justify-content-center gap-3 mb-3"
                             }
                         >
-                            <Form.Label className={"w-fit"}>
-                                {config.LIST.search.label}
-                            </Form.Label>
-                            <Form.Control
-                                name={config.LIST.search.key}
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                                className={"w-25"}
-                            />
+                            {config.LIST.search.isEnabled && (
+                                <>
+                                    <Form.Label className={"w-fit"}>
+                                        {config.LIST.search.label}
+                                    </Form.Label>
+                                    <Form.Control
+                                        name={config.LIST.search.key}
+                                        value={search}
+                                        onChange={(e) =>
+                                            setSearch(e.target.value)
+                                        }
+                                        className={"w-25"}
+                                    />
+                                </>
+                            )}
+                            {config.LIST.filterSelection.isEnabled && (
+                                <>
+                                    <Form.Label className={"w-fit"}>
+                                        {config.LIST.filterSelection.label}
+                                    </Form.Label>
+                                    {config.LIST.filterSelection.type ===
+                                        "select" && (
+                                        <Form.Select
+                                            value={filterSelection}
+                                            onChange={
+                                                handleFilterSelectionChange
+                                            }
+                                            className={"w-25"}
+                                        >
+                                            <option value="">All</option>
+                                            {Object.entries(
+                                                config.LIST.filterSelection
+                                                    .options,
+                                            ).map(([oId, label]) => (
+                                                <option key={oId} value={oId}>
+                                                    {label}
+                                                </option>
+                                            ))}
+                                        </Form.Select>
+                                    )}
+                                    {config.LIST.filterSelection.type ===
+                                        "fetch-select" && (
+                                        <Form.Select
+                                            value={filterSelection}
+                                            onChange={
+                                                handleFilterSelectionChange
+                                            }
+                                            className={"w-25"}
+                                        >
+                                            <option value="">All</option>
+                                            {fetchFilterSelection &&
+                                                "map" in fetchFilterSelection &&
+                                                fetchFilterSelection.map(
+                                                    (row) => (
+                                                        <option
+                                                            key={row.id}
+                                                            value={row.param}
+                                                        >
+                                                            {
+                                                                row[
+                                                                    config.LIST
+                                                                        .filterSelection
+                                                                        .options
+                                                                        .param
+                                                                ]
+                                                            }
+                                                        </option>
+                                                    ),
+                                                )}
+                                        </Form.Select>
+                                    )}
+                                </>
+                            )}
                             <Button
-                                onClick={handleSearch}
+                                type={"submit"}
                                 variant={"outline-secondary"}
                             >
                                 Search
