@@ -30,7 +30,13 @@ export default function Details() {
 					<p key={key}>{key}: {func(details)}</p>
 				))}
 
-				<Button variant={"secondary"} href={"/"}>Back</Button>
+				<Button className={"me-2"} variant={"secondary"} href={"/"}>Back</Button>
+				<Button
+					variant={"outline-primary"}
+					href={config.UPDATE.page.replace(":id", id)}
+				>
+					Edit
+				</Button>
 			</Container>
         </>
     );

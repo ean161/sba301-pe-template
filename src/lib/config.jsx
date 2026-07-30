@@ -62,21 +62,39 @@ export const config = {
             ACTIONS: (row, handleDeleteBtn) => {
                 if (config.DELETE.isModal) {
                     return (
-                        <Button
-                            variant={"outline-danger"}
-                            onClick={() => handleDeleteBtn(row.id)}
-                        >
-                            Delete
-                        </Button>
+                        <>
+                            <Button
+                                href={`${config.UPDATE.page.replace(":id", row.id)}`}
+                                className="me-2"
+                                variant={"outline-primary"}
+                            >
+                                Edit
+                            </Button>
+                            <Button
+                                variant={"outline-danger"}
+                                onClick={() => handleDeleteBtn(row.id)}
+                            >
+                                Delete
+                            </Button>
+                        </>
                     );
                 } else {
                     return (
-                        <Button
-                            variant={"outline-danger"}
-                            href={`${config.DELETE.page.replace(":id", row.id)}`}
-                        >
-                            Delete
-                        </Button>
+                        <>
+                            <Button
+                                href={`${config.UPDATE.page.replace(":id", row.id)}`}
+                                className="me-2"
+                                variant={"outline-primary"}
+                            >
+                                Edit
+                            </Button>
+                            <Button
+                                variant={"outline-danger"}
+                                href={`${config.DELETE.page.replace(":id", row.id)}`}
+                            >
+                                Delete
+                            </Button>
+                        </>
                     );
                 }
             },
@@ -112,6 +130,45 @@ export const config = {
                     // [key: val]
                     // url: "/v1/CONFIG_SAMPLE",
                     // param: "CONFIG_SAMPLE",
+                },
+            },
+            // {
+            //     label: "CONFIG_SAMPLE Date",
+            //     key: "CONFIG_SAMPLE",
+            //     placeHolder: "Select a CONFIG_SAMPLE date",
+            //     type: "date", // input | date | datetime | select | fetch-select
+            //     validate: {
+            //         type: "date", // text | number | date | datetime
+            //     },
+            // },
+            // {
+            //     label: "CONFIG_SAMPLE Datetime",
+            //     key: "CONFIG_SAMPLE",
+            //     placeHolder: "Select a CONFIG_SAMPLE datetime",
+            //     type: "datetime", // input | date | datetime | select | fetch-select
+            //     validate: {
+            //         type: "datetime", // text | number | date | datetime
+            //     },
+            // },
+        ],
+    },
+    UPDATE: {
+        title: "UPDATE",
+        page: "/CONFIG_SAMPLE/update/:id",
+        rest: "/v1/CONFIG_SAMPLE/:id",
+        detailsRest: "/v1/CONFIG_SAMPLE/:id",
+        successAlert: "Updated successfully",
+        errorAlert: "Failed on update",
+        form: [
+            {
+                label: "CONFIG_SAMPLE",
+                key: "CONFIG_SAMPLE",
+                placeHolder: "Enter a CONFIG_SAMPLE",
+                type: "input", // input | date | datetime | select | fetch-select
+                validate: {
+                    type: "text", // text | number | date | datetime
+                    min: 3,
+                    max: 5,
                 },
             },
             // {
